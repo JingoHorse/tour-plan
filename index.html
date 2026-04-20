@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>山城重庆之旅 · 4/30-5/4 行程规划</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="hero">
+        <h1>🏔️ 山城重庆之旅</h1>
+        <p class="subtitle">4月30日 — 5月4日 · 慢游山城 · 四人行</p>
+        <div class="meta">
+            <div class="meta-item"><i class="fas fa-calendar-alt"></i> 2026.04.30 - 05.04</div>
+            <div class="meta-item"><i class="fas fa-users"></i> 4人 · 2男2女</div>
+            <div class="meta-item"><i class="fas fa-cloud-sun"></i> 18°C ~ 31°C</div>
+            <div class="meta-item"><i class="fas fa-home"></i> 庆隆海客瀛洲B栋</div>
+            <div class="meta-item"><i class="fas fa-train"></i> 5/4 15:30 重庆北站</div>
+        </div>
+    </div>
+    <div class="container" id="app"></div>
+    <div class="footer">🏔️ 山城重庆之旅 · 2026.04.30 - 05.04 · 四人同行</div>
+    <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3 id="modalTitle"></h3><button class="modal-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+    <script
+        src="https://webapi.amap.com/maps?v=2.0&key=b54f9f610747e1ee45297d9b9f72d160&plugin=AMap.MarkerCluster,AMap.Driving,AMap.Walking"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
