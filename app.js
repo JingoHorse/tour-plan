@@ -595,7 +595,7 @@ var DAYS = [
     ov: [
       { ic: "fa-landmark", cls: "scenic", lb: "景点", vl: "磁器口·白公馆" },
       { ic: "fa-fire", cls: "food", lb: "晚餐", vl: "俊杰火锅 🔥" },
-      { ic: "fa-microphone", cls: "food", lb: "晚间", vl: "唱吧麦颂KTV 🎤" },
+      { ic: "fa-microphone", cls: "entertainment", lb: "晚间", vl: "唱吧麦颂KTV 🎤" },
       { ic: "fa-subway", cls: "transport", lb: "交通", vl: "地铁+打车" },
     ],
     tl: [
@@ -658,7 +658,7 @@ var DAYS = [
         ti: "🎤 唱吧麦颂KTV（解放碑店）",
         d: "住宿附近KTV，预算约¥180/4人",
         tg: [
-          { c: "transport", l: "KTV" },
+          { c: "entertainment", l: "🎤 KTV" },
           { c: "local", l: "≤¥200" },
         ],
         tp: "",
@@ -990,7 +990,7 @@ function rItinerary() {
 }
 
 function rMap() {
-  return '<div class="section"><h2 class="section-title"><i class="fas fa-map-marked-alt"></i> 路线地图</h2><div class="map-section"><div class="map-header"><h3><i class="fas fa-map"></i> 行程路线</h3><div class="map-tabs"><button class="map-tab active" onclick="switchMapView(\'day\')">当日路线</button><button class="map-tab" onclick="switchMapView(\'overview\')">五日总览</button></div></div><div id="mapContainer"></div><div class="overview-cards" id="overviewCards" style="display:none"><div class="overview-card active" onclick="switchDayFromMap(0)"><div class="day-label">Day1 · 4/30</div><div class="day-places">解放碑→洪崖洞<br>蛙鱼郎美蛙鱼</div></div><div class="overview-card" onclick="switchDayFromMap(1)"><div class="day-label">Day2 · 5/1</div><div class="day-places">索道→十八梯→湖广会馆<br>三峡博物馆→大礼堂<br>小兵老火锅</div></div><div class="overview-card" onclick="switchDayFromMap(2)"><div class="day-label">Day3 · 5/2</div><div class="day-places">磁器口→白公馆<br>俊杰火锅→KTV</div></div><div class="overview-card" onclick="switchDayFromMap(3)"><div class="day-label">Day4 · 5/3 🎂</div><div class="day-places">鹅岭→李子坝→弹子石<br>🎂生日下午茶<br>朝天门→宝气蛙自助</div></div><div class="overview-card" onclick="switchDayFromMap(4)"><div class="day-label">Day5 · 5/4</div><div class="day-places">自由活动<br>红蜻蜓美蛙鱼<br>→重庆北站</div></div></div></div></div>';
+  return '<div class="section"><h2 class="section-title"><i class="fas fa-map-marked-alt"></i> 路线地图</h2><div class="map-section"><div class="map-header"><h3><i class="fas fa-map"></i> 行程路线</h3><div class="map-tabs"><button class="map-tab active" data-mode="day" onclick="switchMapView(\'day\')">当日路线</button><button class="map-tab" data-mode="overview" onclick="switchMapView(\'overview\')">五日总览</button></div></div><div id="mapContainer"></div><div class="overview-cards" id="overviewCards" style="display:none"><div class="overview-card active" onclick="switchDayFromMap(0)"><div class="day-label">Day1 · 4/30</div><div class="day-places">解放碑→洪崖洞<br>蛙鱼郎美蛙鱼</div></div><div class="overview-card" onclick="switchDayFromMap(1)"><div class="day-label">Day2 · 5/1</div><div class="day-places">索道→十八梯→湖广会馆<br>三峡博物馆→大礼堂<br>小兵老火锅</div></div><div class="overview-card" onclick="switchDayFromMap(2)"><div class="day-label">Day3 · 5/2</div><div class="day-places">磁器口→白公馆<br>俊杰火锅→KTV</div></div><div class="overview-card" onclick="switchDayFromMap(3)"><div class="day-label">Day4 · 5/3 🎂</div><div class="day-places">鹅岭→李子坝→弹子石<br>🎂生日下午茶<br>朝天门→宝气蛙自助</div></div><div class="overview-card" onclick="switchDayFromMap(4)"><div class="day-label">Day5 · 5/4</div><div class="day-places">自由活动<br>红蜻蜓美蛙鱼<br>→重庆北站</div></div></div></div></div>';
 }
 
 function rFood() {
@@ -1077,7 +1077,7 @@ function rScenic() {
 }
 
 function rVote() {
-  return '<div class="section"><h2 class="section-title"><i class="fas fa-vote-yea"></i> 旅行投票</h2><div class="vote-section"><h2>🎯 选出你最期待的！</h2><p class="vote-sub">4人全部投票后揭晓结果，每人可选多个选项</p><div class="vote-players" id="votePlayers"><div class="vote-player active" onclick="selectPlayer(0)"><div class="vp-avatar" style="background:rgba(120,188,232,.72)">👨</div><div class="vp-name">刘乐彤</div><div class="vp-status" id="pStatus0">投票中</div></div><div class="vote-player" onclick="selectPlayer(1)"><div class="vp-avatar" style="background:rgba(139,199,238,.72)">👨</div><div class="vp-name">邢晖</div><div class="vp-status" id="pStatus1">未投票</div></div><div class="vote-player" onclick="selectPlayer(2)"><div class="vp-avatar" style="background:rgba(167,213,236,.72)">👩</div><div class="vp-name">王雨</div><div class="vp-status" id="pStatus2">未投票</div></div><div class="vote-player" onclick="selectPlayer(3)"><div class="vp-avatar" style="background:rgba(112,171,201,.72)">👩</div><div class="vp-name">霍颖</div><div class="vp-status" id="pStatus3">未投票</div></div></div><div class="vote-tabs"><button class="vote-tab active" onclick="switchVoteTab(\'scenic\')">🏛️ 最期待景点</button><button class="vote-tab" onclick="switchVoteTab(\'food\')">🍲 最期待美食</button></div><div class="vote-grid" id="voteGrid"></div><button class="vote-btn" id="voteBtn" onclick="submitVote()">✅ 确认投票</button><div class="vote-results" id="voteResults"></div></div></div>';
+  return '<div class="section"><h2 class="section-title"><i class="fas fa-vote-yea"></i> 旅行投票</h2><div class="vote-section"><h2>🎯 选出你最期待的！</h2><p class="vote-sub">4人全部投票后揭晓结果，每人可选多个选项</p><div class="vote-players" id="votePlayers"><div class="vote-player active" onclick="selectPlayer(0)"><div class="vp-avatar" style="background:rgba(120,188,232,.72)">👨</div><div class="vp-name">刘乐彤</div><div class="vp-status" id="pStatus0">投票中</div></div><div class="vote-player" onclick="selectPlayer(1)"><div class="vp-avatar" style="background:rgba(139,199,238,.72)">👨</div><div class="vp-name">邢晖</div><div class="vp-status" id="pStatus1">未投票</div></div><div class="vote-player" onclick="selectPlayer(2)"><div class="vp-avatar" style="background:rgba(167,213,236,.72)">👩</div><div class="vp-name">王雨</div><div class="vp-status" id="pStatus2">未投票</div></div><div class="vote-player" onclick="selectPlayer(3)"><div class="vp-avatar" style="background:rgba(112,171,201,.72)">👩</div><div class="vp-name">霍颖</div><div class="vp-status" id="pStatus3">未投票</div></div></div><div class="vote-tabs"><button class="vote-tab active" data-tab="scenic" onclick="switchVoteTab(\'scenic\')">🏛️ 最期待景点</button><button class="vote-tab" data-tab="food" onclick="switchVoteTab(\'food\')">🍲 最期待美食</button></div><div class="vote-grid" id="voteGrid"></div><button class="vote-btn" id="voteBtn" onclick="submitVote()">✅ 确认投票</button><div class="vote-results" id="voteResults"></div></div></div>';
 }
 
 function rPractical() {
@@ -1092,15 +1092,16 @@ function switchDay(i) {
   document.querySelectorAll(".day-panel").forEach(function (p, j) {
     p.classList.toggle("active", j === i);
   });
+  document.querySelectorAll(".overview-card").forEach(function (c, j) {
+    c.classList.toggle("active", j === i);
+  });
   if (mapViewMode === "day") updateMapDay();
+  else updateMapOverview();
 }
 function switchMapView(m) {
   mapViewMode = m;
   document.querySelectorAll(".map-tab").forEach(function (t) {
-    t.classList.toggle(
-      "active",
-      t.textContent.includes(m === "day" ? "当日" : "总览"),
-    );
+    t.classList.toggle("active", t.getAttribute("data-mode") === m);
   });
   document.getElementById("overviewCards").style.display =
     m === "overview" ? "grid" : "none";
@@ -1337,7 +1338,7 @@ function showDetail(type, id) {
   } else if (type === "hotel") {
     openModal(
       "庆隆海客瀛洲B栋",
-      '<div class="modal-img" style="background-image:url(\'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400\')"></div><div class="modal-info"><div class="mi-row"><i class="fas fa-map-marker-alt"></i><div>地址：重庆市渝中区朝天门</div></div><div class="mi-row"><i class="fas fa-calendar-check"></i><div>入住：4/30 - 5/4（5晚）</div></div></div><div class="modal-desc">庆隆海客瀛洲位于渝中区朝天门附近，地理位置优越，步行可达洪崖洞、解放碑等核心景点。周边交通便利，地铁1号线小什字站步行可达。公寓式酒店，设施齐全，适合4人团队入住。附近餐饮丰富，便利店、超市一应俱全。</div>',
+      '<div class="modal-img" style="background-image:url(\'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400\')"></div><div class="modal-info"><div class="mi-row"><i class="fas fa-map-marker-alt"></i><div>地址：重庆市渝中区朝天门</div></div><div class="mi-row"><i class="fas fa-calendar-check"></i><div>入住：4/30 - 5/4（4晚）</div></div></div><div class="modal-desc">庆隆海客瀛洲位于渝中区朝天门附近，地理位置优越，步行可达洪崖洞、解放碑等核心景点。周边交通便利，地铁1号线小什字站步行可达。公寓式酒店，设施齐全，适合4人团队入住。附近餐饮丰富，便利店、超市一应俱全。</div>',
     );
   } else if (type === "transport") {
     openModal(
@@ -1350,14 +1351,28 @@ function showDetail(type, id) {
 function openModal(title, body) {
   document.getElementById("modalTitle").textContent = title;
   document.getElementById("modalBody").innerHTML = body;
-  document.getElementById("modalOverlay").classList.add("show");
+  var ov = document.getElementById("modalOverlay");
+  ov.classList.remove("closing");
+  ov.classList.add("show");
   document.body.style.overflow = "hidden";
 }
 function closeModal(e) {
-  if (e && e.target !== document.getElementById("modalOverlay")) return;
-  document.getElementById("modalOverlay").classList.remove("show");
+  var ov = document.getElementById("modalOverlay");
+  if (e && e.target !== ov) return;
+  if (!ov.classList.contains("show")) return;
+  ov.classList.add("closing");
   document.body.style.overflow = "";
+  setTimeout(function () {
+    ov.classList.remove("show");
+    ov.classList.remove("closing");
+  }, 240);
 }
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Escape" || e.keyCode === 27) {
+    var ov = document.getElementById("modalOverlay");
+    if (ov && ov.classList.contains("show")) closeModal();
+  }
+});
 
 function selectPlayer(i) {
   if (votedPlayers.has(i)) return;
@@ -1372,10 +1387,7 @@ function selectPlayer(i) {
 function switchVoteTab(tab) {
   currentVoteTab = tab;
   document.querySelectorAll(".vote-tab").forEach(function (t) {
-    t.classList.toggle(
-      "active",
-      t.textContent.includes(tab === "scenic" ? "景点" : "美食"),
-    );
+    t.classList.toggle("active", t.getAttribute("data-tab") === tab);
   });
   rVoteGrid();
 }
@@ -1445,6 +1457,47 @@ function submitVote() {
   }
 }
 
+function assignRanks(list) {
+  var lastVotes = null;
+  var lastRank = 0;
+  list.forEach(function (r, i) {
+    if (r.votes !== lastVotes) {
+      r.rank = i + 1;
+      lastVotes = r.votes;
+      lastRank = r.rank;
+    } else {
+      r.rank = lastRank;
+    }
+  });
+}
+
+function renderResultRow(r, maxVotes) {
+  var rc =
+    r.rank === 1
+      ? "gold"
+      : r.rank === 2
+      ? "silver"
+      : r.rank === 3
+      ? "bronze"
+      : "normal";
+  var pct = maxVotes > 0 ? Math.round((r.votes / maxVotes) * 100) : 0;
+  return (
+    '<div class="result-item"><div class="rank ' +
+    rc +
+    '">' +
+    r.rank +
+    '</div><div class="ri-info"><div class="ri-name">' +
+    r.icon +
+    " " +
+    r.name +
+    '</div><div class="ri-bar"><div class="fill" style="width:' +
+    pct +
+    '%"></div></div></div><div class="ri-votes">' +
+    r.votes +
+    "/4票</div></div>"
+  );
+}
+
 function showVoteResults() {
   var res = document.getElementById("voteResults");
   res.classList.add("show");
@@ -1473,46 +1526,18 @@ function showVoteResults() {
   }).sort(function (a, b) {
     return b.votes - a.votes;
   });
+  assignRanks(sr);
+  assignRanks(fr);
+  var maxS = sr.length && sr[0].votes > 0 ? sr[0].votes : 1;
+  var maxF = fr.length && fr[0].votes > 0 ? fr[0].votes : 1;
   var h = '<h3 style="margin-bottom:16px">📊 投票结果</h3>';
   h += '<h4 style="margin-bottom:12px">🏛️ 最期待景点</h4>';
-  sr.forEach(function (r, i) {
-    var rc =
-      i === 0 ? "gold" : i === 1 ? "silver" : i === 2 ? "bronze" : "normal";
-    var pct = Math.round((r.votes / 4) * 100);
-    h +=
-      '<div class="result-item"><div class="rank ' +
-      rc +
-      '">' +
-      (i + 1) +
-      '</div><div class="ri-info"><div class="ri-name">' +
-      r.icon +
-      " " +
-      r.name +
-      '</div><div class="ri-bar"><div class="fill" style="width:' +
-      pct +
-      '%"></div></div></div><div class="ri-votes">' +
-      r.votes +
-      "/4票</div></div>";
+  sr.forEach(function (r) {
+    h += renderResultRow(r, maxS);
   });
   h += '<h4 style="margin:16px 0 12px">🍲 最期待美食</h4>';
-  fr.forEach(function (r, i) {
-    var rc =
-      i === 0 ? "gold" : i === 1 ? "silver" : i === 2 ? "bronze" : "normal";
-    var pct = Math.round((r.votes / 4) * 100);
-    h +=
-      '<div class="result-item"><div class="rank ' +
-      rc +
-      '">' +
-      (i + 1) +
-      '</div><div class="ri-info"><div class="ri-name">' +
-      r.icon +
-      " " +
-      r.name +
-      '</div><div class="ri-bar"><div class="fill" style="width:' +
-      pct +
-      '%"></div></div></div><div class="ri-votes">' +
-      r.votes +
-      "/4票</div></div>";
+  fr.forEach(function (r) {
+    h += renderResultRow(r, maxF);
   });
   var topS = sr[0];
   var topF = fr[0];
