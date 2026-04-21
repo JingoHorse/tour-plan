@@ -888,6 +888,56 @@ var DAYS = [
   },
 ];
 
+var TRIP_START = new Date(2026, 3, 30);
+var TRIP_END = new Date(2026, 4, 4);
+var MS_PER_DAY = 86400000;
+
+function getTripStatus() {
+  var now = new Date();
+  now.setHours(0, 0, 0, 0);
+  var t = now.getTime();
+  if (t < TRIP_START.getTime()) {
+    return {
+      phase: "before",
+      daysLeft: Math.ceil((TRIP_START.getTime() - t) / MS_PER_DAY),
+      currentDay: 0,
+    };
+  }
+  if (t > TRIP_END.getTime()) {
+    return { phase: "after", currentDay: 4 };
+  }
+  var idx = Math.round((t - TRIP_START.getTime()) / MS_PER_DAY);
+  if (idx < 0) idx = 0;
+  if (idx > 4) idx = 4;
+  return { phase: "during", currentDay: idx, dayOfTrip: idx + 1 };
+}
+
+function renderCountdown() {
+  var el = document.getElementById("heroCountdown");
+  if (!el) return;
+  var s = getTripStatus();
+  if (s.phase === "before") {
+    el.className = "hero-countdown before";
+    el.innerHTML =
+      '<i class="fas fa-hourglass-half"></i>' +
+      '<span class="cd-label">距离出发还有</span>' +
+      '<span class="cd-num">' + s.daysLeft + '</span>' +
+      '<span class="cd-unit">天</span>';
+  } else if (s.phase === "during") {
+    el.className = "hero-countdown during";
+    el.innerHTML =
+      '<i class="fas fa-plane-departure"></i>' +
+      '<span class="cd-label">旅途中</span>' +
+      '<span class="cd-badge">DAY ' + s.dayOfTrip + '</span>' +
+      '<span class="cd-unit">/ 5</span>';
+  } else {
+    el.className = "hero-countdown after";
+    el.innerHTML =
+      '<i class="fas fa-heart"></i>' +
+      '<span class="cd-label">🎉 愉快的重庆之旅已圆满结束</span>';
+  }
+}
+
 function renderApp() {
   var a = document.getElementById("app");
   a.innerHTML =
@@ -898,6 +948,10 @@ function renderApp() {
     rScenic() +
     rVote() +
     rPractical();
+  renderCountdown();
+  var s = getTripStatus();
+  currentDay = s.currentDay;
+  switchDay(currentDay);
   rVoteGrid();
   initMap();
 }
@@ -1095,6 +1149,7 @@ function switchDay(i) {
   document.querySelectorAll(".overview-card").forEach(function (c, j) {
     c.classList.toggle("active", j === i);
   });
+  if (!map) return;
   if (mapViewMode === "day") updateMapDay();
   else updateMapOverview();
 }
@@ -1375,12 +1430,46 @@ document.addEventListener("keydown", function (e) {
 });
 
 function selectPlayer(i) {
-  if (votedPlayers.has(i)) return;
   currentPlayer = i;
   document.querySelectorAll(".vote-player").forEach(function (p, j) {
     p.classList.toggle("active", j === i);
-    if (!votedPlayers.has(j)) p.classList.remove("voted");
   });
+  updateVoteActionButton();
+  rVoteGrid();
+}
+
+function updateVoteActionButton() {
+  var btn = document.getElementById("voteBtn");
+  if (!btn) return;
+  btn.classList.remove("withdraw");
+  btn.disabled = false;
+  if (votedPlayers.has(currentPlayer)) {
+    btn.innerHTML = '<i class="fas fa-undo"></i> 撤回投票';
+    btn.classList.add("withdraw");
+    btn.onclick = withdrawVote;
+  } else if (votedPlayers.size === 4) {
+    btn.textContent = "🎉 全部投票完成！";
+    btn.disabled = true;
+    btn.onclick = null;
+  } else {
+    btn.textContent = "✅ 确认投票";
+    btn.onclick = submitVote;
+  }
+}
+
+function withdrawVote() {
+  if (!votedPlayers.has(currentPlayer)) return;
+  votedPlayers.delete(currentPlayer);
+  var p = document.querySelectorAll(".vote-player")[currentPlayer];
+  p.classList.remove("voted");
+  p.classList.add("active");
+  document.getElementById("pStatus" + currentPlayer).textContent = "投票中";
+  var res = document.getElementById("voteResults");
+  if (res) {
+    res.classList.remove("show");
+    res.innerHTML = "";
+  }
+  updateVoteActionButton();
   rVoteGrid();
 }
 
@@ -1395,12 +1484,14 @@ function switchVoteTab(tab) {
 function rVoteGrid() {
   var items = currentVoteTab === "scenic" ? VS : VF;
   var selected = voteData[currentPlayer][currentVoteTab];
+  var isLocked = votedPlayers.has(currentPlayer);
   var h = "";
   items.forEach(function (item) {
     var isSel = selected.indexOf(item.id) >= 0;
     h +=
       '<div class="vote-item' +
       (isSel ? " selected" : "") +
+      (isLocked ? " locked" : "") +
       '" onclick="toggleVote(\'' +
       item.id +
       '\')"><div class="vi-icon" style="background:' +
@@ -1426,18 +1517,16 @@ function toggleVote(id) {
 }
 
 function submitVote() {
-  if (voteData[currentPlayer][currentVoteTab].length === 0) {
-    alert("请至少选择一个选项！");
+  var sel = voteData[currentPlayer];
+  if (sel.scenic.length === 0 && sel.food.length === 0) {
+    alert("请至少选择一个景点或美食！");
     return;
   }
   votedPlayers.add(currentPlayer);
   document.getElementById("pStatus" + currentPlayer).textContent = "已投票 ✓";
-  document
-    .querySelectorAll(".vote-player")
-    [currentPlayer].classList.remove("active");
-  document
-    .querySelectorAll(".vote-player")
-    [currentPlayer].classList.add("voted");
+  var players = document.querySelectorAll(".vote-player");
+  players[currentPlayer].classList.remove("active");
+  players[currentPlayer].classList.add("voted");
   var next = -1;
   for (var i = 0; i < 4; i++) {
     if (!votedPlayers.has(i)) {
@@ -1447,14 +1536,12 @@ function submitVote() {
   }
   if (next >= 0) {
     currentPlayer = next;
-    document.querySelectorAll(".vote-player")[next].classList.add("active");
+    players[next].classList.add("active");
     document.getElementById("pStatus" + next).textContent = "投票中";
     rVoteGrid();
-  } else {
-    document.getElementById("voteBtn").disabled = true;
-    document.getElementById("voteBtn").textContent = "🎉 全部投票完成！";
-    showVoteResults();
   }
+  updateVoteActionButton();
+  if (votedPlayers.size === 4) showVoteResults();
 }
 
 function assignRanks(list) {
@@ -1471,7 +1558,7 @@ function assignRanks(list) {
   });
 }
 
-function renderResultRow(r, maxVotes) {
+function renderResultRow(r, maxVotes, animOrder) {
   var rc =
     r.rank === 1
       ? "gold"
@@ -1481,8 +1568,9 @@ function renderResultRow(r, maxVotes) {
       ? "bronze"
       : "normal";
   var pct = maxVotes > 0 ? Math.round((r.votes / maxVotes) * 100) : 0;
+  var delay = (animOrder || 0) * 60;
   return (
-    '<div class="result-item"><div class="rank ' +
+    '<div class="result-item" style="--anim-delay:' + delay + 'ms"><div class="rank ' +
     rc +
     '">' +
     r.rank +
@@ -1490,9 +1578,9 @@ function renderResultRow(r, maxVotes) {
     r.icon +
     " " +
     r.name +
-    '</div><div class="ri-bar"><div class="fill" style="width:' +
+    '</div><div class="ri-bar"><div class="fill" data-pct="' +
     pct +
-    '%"></div></div></div><div class="ri-votes">' +
+    '" style="width:0%;transition-delay:' + (delay + 150) + 'ms"></div></div></div><div class="ri-votes">' +
     r.votes +
     "/4票</div></div>"
   );
@@ -1532,12 +1620,12 @@ function showVoteResults() {
   var maxF = fr.length && fr[0].votes > 0 ? fr[0].votes : 1;
   var h = '<h3 style="margin-bottom:16px">📊 投票结果</h3>';
   h += '<h4 style="margin-bottom:12px">🏛️ 最期待景点</h4>';
-  sr.forEach(function (r) {
-    h += renderResultRow(r, maxS);
+  sr.forEach(function (r, i) {
+    h += renderResultRow(r, maxS, i);
   });
   h += '<h4 style="margin:16px 0 12px">🍲 最期待美食</h4>';
-  fr.forEach(function (r) {
-    h += renderResultRow(r, maxF);
+  fr.forEach(function (r, i) {
+    h += renderResultRow(r, maxF, sr.length + i);
   });
   var topS = sr[0];
   var topF = fr[0];
@@ -1566,6 +1654,14 @@ function showVoteResults() {
       "...</span></div>";
   h += "</div>";
   res.innerHTML = h;
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () {
+      res.querySelectorAll(".ri-bar .fill").forEach(function (el) {
+        var pct = el.getAttribute("data-pct");
+        if (pct != null) el.style.width = pct + "%";
+      });
+    });
+  });
 }
 
 renderApp();

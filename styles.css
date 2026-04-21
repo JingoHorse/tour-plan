@@ -270,7 +270,105 @@ button {
     font-weight: 400;
     color: var(--text-muted);
     letter-spacing: 3px;
-    margin-bottom: 32px;
+    margin-bottom: 28px;
+}
+
+/* ———— 倒计时 / 旅途中徽章 ———— */
+.hero-countdown {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 22px;
+    margin-bottom: 30px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(234, 245, 252, 0.88));
+    border: 1px solid rgba(120, 188, 232, 0.35);
+    border-radius: var(--radius-pill);
+    box-shadow: 0 10px 30px rgba(47, 120, 168, 0.1);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    font-weight: 600;
+    animation: cdFadeIn 0.8s ease 0.6s both;
+}
+
+@keyframes cdFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero-countdown:empty {
+    display: none;
+}
+
+.hero-countdown > i {
+    color: var(--primary-deep);
+    font-size: 0.95em;
+    margin-right: 2px;
+}
+
+.hero-countdown .cd-label {
+    font-size: 0.85em;
+    color: var(--text-muted);
+    letter-spacing: 1.5px;
+    font-weight: 500;
+}
+
+.hero-countdown .cd-num {
+    font-size: 1.8em;
+    font-weight: 900;
+    color: var(--primary-deep);
+    letter-spacing: 0.5px;
+    line-height: 1;
+    margin: 0 2px;
+    background: linear-gradient(180deg, var(--primary-deep), #1f5d87);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-countdown .cd-unit {
+    font-size: 0.86em;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.hero-countdown .cd-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 14px;
+    background: linear-gradient(135deg, var(--primary-deep), #1f5d87);
+    color: #fff;
+    border-radius: var(--radius-pill);
+    font-size: 0.86em;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    box-shadow: 0 6px 14px rgba(47, 120, 168, 0.35);
+}
+
+.hero-countdown.during {
+    background: linear-gradient(135deg, rgba(47, 120, 168, 0.08), rgba(120, 188, 232, 0.14));
+    border-color: rgba(47, 120, 168, 0.3);
+    animation: cdFadeIn 0.8s ease 0.6s both, cdPulse 2.8s ease-in-out 1.4s infinite;
+}
+
+@keyframes cdPulse {
+    0%, 100% { box-shadow: 0 10px 30px rgba(47, 120, 168, 0.1); }
+    50%      { box-shadow: 0 12px 36px rgba(47, 120, 168, 0.26); }
+}
+
+.hero-countdown.after {
+    background: linear-gradient(135deg, rgba(16, 163, 127, 0.08), rgba(120, 188, 232, 0.1));
+    border-color: rgba(16, 163, 127, 0.3);
+}
+
+.hero-countdown.after > i {
+    color: var(--c-green);
 }
 
 .hero .meta {
@@ -1155,6 +1253,42 @@ button {
     box-shadow: 0 4px 12px rgba(47, 120, 168, 0.1);
 }
 
+.vote-item.locked {
+    cursor: not-allowed;
+    opacity: 0.78;
+    pointer-events: none;
+    background: var(--bg-soft);
+}
+
+.vote-item.locked.selected {
+    opacity: 1;
+    border-color: rgba(16, 163, 127, 0.55);
+    background: rgba(16, 163, 127, 0.08);
+    box-shadow: 0 4px 12px rgba(16, 163, 127, 0.08);
+}
+
+.vote-item.locked.selected .vi-check {
+    color: var(--c-green);
+}
+
+.vote-item.locked {
+    cursor: not-allowed;
+    opacity: 0.78;
+    pointer-events: none;
+    background: var(--bg-soft);
+}
+
+.vote-item.locked.selected {
+    opacity: 1;
+    border-color: rgba(16, 163, 127, 0.55);
+    background: rgba(16, 163, 127, 0.08);
+    box-shadow: 0 4px 12px rgba(16, 163, 127, 0.08);
+}
+
+.vote-item.locked.selected .vi-check {
+    color: var(--c-green);
+}
+
 .vote-item .vi-icon {
     width: 38px;
     height: 38px;
@@ -1224,6 +1358,23 @@ button {
     transform: none;
 }
 
+.vote-btn.withdraw {
+    background: #fff;
+    color: var(--c-orange);
+    border: 1.5px solid var(--c-orange);
+    box-shadow: 0 6px 16px rgba(224, 138, 60, 0.18);
+}
+
+.vote-btn.withdraw:hover {
+    background: var(--c-orange);
+    color: #fff;
+    box-shadow: 0 10px 24px rgba(224, 138, 60, 0.32);
+}
+
+.vote-btn.withdraw i {
+    margin-right: 6px;
+}
+
 .vote-results {
     margin-top: 28px;
     display: none;
@@ -1242,6 +1393,21 @@ button {
     background: var(--bg-soft);
     border: 1px solid var(--border);
     margin-bottom: 10px;
+    opacity: 0;
+    transform: translateY(10px);
+    animation: resultItemIn 0.5s cubic-bezier(.2, .8, .2, 1) forwards;
+    animation-delay: var(--anim-delay, 0ms);
+}
+
+@keyframes resultItemIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .result-item .rank {
@@ -1296,7 +1462,8 @@ button {
     height: 100%;
     border-radius: 3px;
     background: var(--gradient-primary);
-    transition: width 0.6s ease;
+    transition: width 0.9s cubic-bezier(.2, .8, .2, 1);
+    box-shadow: 0 0 8px rgba(47, 120, 168, 0.25);
 }
 
 .result-item .ri-votes {
