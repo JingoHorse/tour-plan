@@ -47,11 +47,11 @@ var LOC = {
 };
 var DR = [
   {
-    c: "#78bce8",
+    c: "#ff4f7b",
     r: ["hotel", "jiefangbei", "hongyadong", "wayulang", "hongyadong", "hotel"],
   },
   {
-    c: "#8bc7ee",
+    c: "#2161ff",
     r: [
       "hotel",
       "suodao",
@@ -64,11 +64,11 @@ var DR = [
     ],
   },
   {
-    c: "#9ed8f4",
+    c: "#ff8a00",
     r: ["hotel", "ciqikou", "baigongguan", "junjie", "ktv", "hotel"],
   },
   {
-    c: "#a7d5ec",
+    c: "#7c4dff",
     r: [
       "hotel",
       "eling",
@@ -79,7 +79,7 @@ var DR = [
       "hotel",
     ],
   },
-  { c: "#70abc9", r: ["hotel", "jiefangbei", "hongguang", "hotel", "beizhan"] },
+  { c: "#00b8a9", r: ["hotel", "jiefangbei", "hongguang", "hotel", "beizhan"] },
 ];
 var W = [
   {
@@ -1155,9 +1155,9 @@ function clearMap() {
 }
 function addMarker(loc, color, label, idx) {
   var prefix = idx
-    ? '<span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;margin-right:5px;border-radius:50%;background:#fff;color:' +
+    ? '<span style="display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;margin-right:6px;border-radius:50%;background:' +
       color +
-      ';font-weight:800">' +
+      ';color:#fff;font-weight:800;box-shadow:0 2px 6px rgba(0,0,0,.22)">' +
       idx +
       "</span>"
     : "";
@@ -1165,9 +1165,9 @@ function addMarker(loc, color, label, idx) {
     position: [loc.lng, loc.lat],
     title: loc.name,
     content:
-      '<div style="display:flex;align-items:center;background:' +
+      '<div style="display:flex;align-items:center;background:rgba(255,255,255,.96);color:#20364f;border:2px solid ' +
       color +
-      ';color:#fff;padding:4px 9px;border-radius:12px;font-size:11px;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.35)">' +
+      ';padding:4px 10px;border-radius:16px;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 6px 16px rgba(20,33,61,.24)">' +
       prefix +
       label +
       "</div>",
@@ -1180,8 +1180,8 @@ function addPolyline(path, color) {
   var p = new AMap.Polyline({
     path: path,
     strokeColor: color,
-    strokeWeight: 5,
-    strokeOpacity: 0.85,
+    strokeWeight: 6,
+    strokeOpacity: 0.92,
     strokeStyle: "solid",
     lineJoin: "round",
     lineCap: "round",
@@ -1198,11 +1198,9 @@ function addDistanceLabel(from, to, color) {
     position: mid,
     zIndex: 80,
     content:
-      '<div style="background:#fff;color:' +
+      '<div style="background:' +
       color +
-      ";border:1px solid " +
-      color +
-      ';padding:3px 7px;border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.18)">约 ' +
+      ';color:#fff;border:2px solid rgba(255,255,255,.95);padding:4px 8px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap;box-shadow:0 6px 16px rgba(20,33,61,.26)">约 ' +
       formatDistance(d) +
       "</div>",
     offset: new AMap.Pixel(-26, -13),
@@ -1251,7 +1249,7 @@ function updateMapDay() {
 }
 function updateMapOverview() {
   clearMap();
-  var colors = ["#78bce8", "#8bc7ee", "#9ed8f4", "#a7d5ec", "#70abc9"];
+  var colors = ["#ff4f7b", "#2161ff", "#ff8a00", "#7c4dff", "#00b8a9"];
   DR.forEach(function (route, di) {
     var path = [];
     route.r.forEach(function (key) {
