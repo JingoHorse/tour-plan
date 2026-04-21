@@ -47,11 +47,11 @@ var LOC = {
 };
 var DR = [
   {
-    c: "#e91e63",
+    c: "#ff4f7b",
     r: ["hotel", "jiefangbei", "hongyadong", "wayulang", "hongyadong", "hotel"],
   },
   {
-    c: "#3f51b5",
+    c: "#2161ff",
     r: [
       "hotel",
       "suodao",
@@ -64,11 +64,11 @@ var DR = [
     ],
   },
   {
-    c: "#e74c3c",
+    c: "#ff8a00",
     r: ["hotel", "ciqikou", "baigongguan", "junjie", "ktv", "hotel"],
   },
   {
-    c: "#9c27b0",
+    c: "#7c4dff",
     r: [
       "hotel",
       "eling",
@@ -79,7 +79,7 @@ var DR = [
       "hotel",
     ],
   },
-  { c: "#ff9800", r: ["hotel", "jiefangbei", "hongguang", "hotel", "beizhan"] },
+  { c: "#00b8a9", r: ["hotel", "jiefangbei", "hongguang", "hotel", "beizhan"] },
 ];
 var W = [
   {
@@ -923,7 +923,7 @@ function rWeather() {
       w.desc +
       "</div>" +
       (w.d === "5/3"
-        ? '<div style="color:#e91e63;font-size:.7em;margin-top:2px">🎂 生日</div>'
+      ? '<div style="color:#ff4f7b;font-size:.7em;margin-top:2px">🎂 生日</div>'
         : "") +
       "</div>";
   });
@@ -1077,7 +1077,7 @@ function rScenic() {
 }
 
 function rVote() {
-  return '<div class="section"><h2 class="section-title"><i class="fas fa-vote-yea"></i> 旅行投票</h2><div class="vote-section"><h2>🎯 选出你最期待的！</h2><p class="vote-sub">4人全部投票后揭晓结果，每人可选多个选项</p><div class="vote-players" id="votePlayers"><div class="vote-player active" onclick="selectPlayer(0)"><div class="vp-avatar" style="background:#e74c3c">👨</div><div class="vp-name">刘乐彤</div><div class="vp-status" id="pStatus0">投票中</div></div><div class="vote-player" onclick="selectPlayer(1)"><div class="vp-avatar" style="background:#3498db">👨</div><div class="vp-name">邢晖</div><div class="vp-status" id="pStatus1">未投票</div></div><div class="vote-player" onclick="selectPlayer(2)"><div class="vp-avatar" style="background:#e91e63">👩</div><div class="vp-name">王雨</div><div class="vp-status" id="pStatus2">未投票</div></div><div class="vote-player" onclick="selectPlayer(3)"><div class="vp-avatar" style="background:#9c27b0">👩</div><div class="vp-name">霍颖</div><div class="vp-status" id="pStatus3">未投票</div></div></div><div class="vote-tabs"><button class="vote-tab active" onclick="switchVoteTab(\'scenic\')">🏛️ 最期待景点</button><button class="vote-tab" onclick="switchVoteTab(\'food\')">🍲 最期待美食</button></div><div class="vote-grid" id="voteGrid"></div><button class="vote-btn" id="voteBtn" onclick="submitVote()">✅ 确认投票</button><div class="vote-results" id="voteResults"></div></div></div>';
+  return '<div class="section"><h2 class="section-title"><i class="fas fa-vote-yea"></i> 旅行投票</h2><div class="vote-section"><h2>🎯 选出你最期待的！</h2><p class="vote-sub">4人全部投票后揭晓结果，每人可选多个选项</p><div class="vote-players" id="votePlayers"><div class="vote-player active" onclick="selectPlayer(0)"><div class="vp-avatar" style="background:linear-gradient(135deg,#ff4f7b,#ff8a00)">👨</div><div class="vp-name">刘乐彤</div><div class="vp-status" id="pStatus0">投票中</div></div><div class="vote-player" onclick="selectPlayer(1)"><div class="vp-avatar" style="background:linear-gradient(135deg,#1677ff,#00b8a9)">👨</div><div class="vp-name">邢晖</div><div class="vp-status" id="pStatus1">未投票</div></div><div class="vote-player" onclick="selectPlayer(2)"><div class="vp-avatar" style="background:linear-gradient(135deg,#ff4f7b,#7c4dff)">👩</div><div class="vp-name">王雨</div><div class="vp-status" id="pStatus2">未投票</div></div><div class="vote-player" onclick="selectPlayer(3)"><div class="vp-avatar" style="background:linear-gradient(135deg,#7c4dff,#2161ff)">👩</div><div class="vp-name">霍颖</div><div class="vp-status" id="pStatus3">未投票</div></div></div><div class="vote-tabs"><button class="vote-tab active" onclick="switchVoteTab(\'scenic\')">🏛️ 最期待景点</button><button class="vote-tab" onclick="switchVoteTab(\'food\')">🍲 最期待美食</button></div><div class="vote-grid" id="voteGrid"></div><button class="vote-btn" id="voteBtn" onclick="submitVote()">✅ 确认投票</button><div class="vote-results" id="voteResults"></div></div></div>';
 }
 
 function rPractical() {
@@ -1251,7 +1251,7 @@ function updateMapDay() {
 }
 function updateMapOverview() {
   clearMap();
-  var colors = ["#e91e63", "#3f51b5", "#e74c3c", "#9c27b0", "#ff9800"];
+  var colors = ["#ff4f7b", "#2161ff", "#ff8a00", "#7c4dff", "#00b8a9"];
   DR.forEach(function (route, di) {
     var path = [];
     route.r.forEach(function (key) {
@@ -1521,15 +1521,15 @@ function showVoteResults() {
   var sd = SD[topS.id];
   var fd = FD[topF.id];
   h +=
-    '<div style="margin-top:24px;padding:20px;background:linear-gradient(135deg,#fff5f5,#fff8e1);border-radius:12px;border:2px solid #e74c3c">';
-  h += '<h3 style="color:#e74c3c;margin-bottom:12px">🏆 榜首推荐</h3>';
+    '<div style="margin-top:24px;padding:20px;background:linear-gradient(135deg,#fff3f6,#f0fbf8);border-radius:8px;border:1px solid rgba(255,79,109,.32);box-shadow:0 14px 34px rgba(25,39,70,.1)">';
+  h += '<h3 style="color:#c92e60;margin-bottom:12px">🏆 榜首推荐</h3>';
   if (sd)
     h +=
       '<div style="margin-bottom:12px"><strong>' +
       topS.icon +
       " 景点榜首：" +
       sd.n +
-      '</strong><br><span style="font-size:.85em;color:#666">' +
+      '</strong><br><span style="font-size:.85em;color:#657287">' +
       sd.ds.substring(0, 80) +
       "...</span></div>";
   if (fd)
@@ -1538,7 +1538,7 @@ function showVoteResults() {
       topF.icon +
       " 美食榜首：" +
       fd.n +
-      '</strong><br><span style="font-size:.85em;color:#666">' +
+      '</strong><br><span style="font-size:.85em;color:#657287">' +
       fd.ds.substring(0, 80) +
       "...</span></div>";
   h += "</div>";
