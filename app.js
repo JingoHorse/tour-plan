@@ -954,7 +954,68 @@ function renderApp() {
   switchDay(currentDay);
   rVoteGrid();
   initMap();
+  enhanceA11y();
 }
+
+function enhanceA11y() {
+  document.querySelectorAll("[onclick]").forEach(function (el) {
+    var tag = el.tagName;
+    if (tag === "BUTTON" || tag === "A" || tag === "INPUT") return;
+    var disabled = el.getAttribute("aria-disabled") === "true";
+    if (disabled) {
+      el.setAttribute("tabindex", "-1");
+    } else if (!el.hasAttribute("tabindex")) {
+      el.setAttribute("tabindex", "0");
+    }
+    if (!el.hasAttribute("role")) el.setAttribute("role", "button");
+  });
+}
+
+document.addEventListener("keydown", function (e) {
+  var key = e.key;
+  var el = document.activeElement;
+  if (!el || el === document.body) return;
+  var tag = el.tagName;
+  var role = el.getAttribute("role");
+
+  if (key === "ArrowLeft" || key === "ArrowRight" || key === "ArrowUp" || key === "ArrowDown") {
+    var group = null;
+    if (role === "radio") group = el.closest('[role="radiogroup"]');
+    else if (role === "tab") group = el.closest('[role="tablist"]');
+    if (!group) return;
+    var items = Array.prototype.filter.call(
+      group.querySelectorAll('[role="' + role + '"]'),
+      function (it) {
+        return it.getAttribute("aria-disabled") !== "true" && !it.hasAttribute("disabled");
+      },
+    );
+    if (!items.length) return;
+    var idx = items.indexOf(el);
+    if (idx < 0) return;
+    var next = key === "ArrowLeft" || key === "ArrowUp" ? idx - 1 : idx + 1;
+    if (next < 0) next = items.length - 1;
+    if (next >= items.length) next = 0;
+    e.preventDefault();
+    items[next].focus();
+    items[next].click();
+    return;
+  }
+
+  if (key !== "Enter" && key !== " " && key !== "Spacebar") return;
+  if (
+    tag === "BUTTON" ||
+    tag === "A" ||
+    tag === "INPUT" ||
+    tag === "TEXTAREA" ||
+    tag === "SELECT"
+  )
+    return;
+  if (!el.hasAttribute("onclick") && role !== "button" && role !== "radio" && role !== "checkbox" && role !== "tab")
+    return;
+  if (el.getAttribute("aria-disabled") === "true") return;
+  e.preventDefault();
+  el.click();
+});
 
 function rWeather() {
   var h =
@@ -986,11 +1047,15 @@ function rWeather() {
 
 function rItinerary() {
   var h =
-    '<div class="section"><h2 class="section-title"><i class="fas fa-route"></i> 每日行程</h2><div class="day-nav">';
+    '<div class="section"><h2 class="section-title"><i class="fas fa-route"></i> 每日行程</h2><div class="day-nav" role="tablist" aria-label="按天切换行程">';
   DAYS.forEach(function (d, i) {
     h +=
       '<button class="day-btn' +
       (i === 0 ? " active" : "") +
+      '" role="tab" aria-pressed="' +
+      (i === 0 ? "true" : "false") +
+      '" aria-controls="day' +
+      i +
       '" onclick="switchDay(' +
       i +
       ')">' +
@@ -1004,6 +1069,8 @@ function rItinerary() {
       (i === 0 ? " active" : "") +
       '" id="day' +
       i +
+      '" role="tabpanel" aria-hidden="' +
+      (i === 0 ? "false" : "true") +
       '"><div class="day-overview">';
     d.ov.forEach(function (o) {
       h +=
@@ -1044,7 +1111,7 @@ function rItinerary() {
 }
 
 function rMap() {
-  return '<div class="section"><h2 class="section-title"><i class="fas fa-map-marked-alt"></i> 路线地图</h2><div class="map-section"><div class="map-header"><h3><i class="fas fa-map"></i> 行程路线</h3><div class="map-tabs"><button class="map-tab active" data-mode="day" onclick="switchMapView(\'day\')">当日路线</button><button class="map-tab" data-mode="overview" onclick="switchMapView(\'overview\')">五日总览</button></div></div><div id="mapContainer"></div><div class="overview-cards" id="overviewCards" style="display:none"><div class="overview-card active" onclick="switchDayFromMap(0)"><div class="day-label">Day1 · 4/30</div><div class="day-places">解放碑→洪崖洞<br>蛙鱼郎美蛙鱼</div></div><div class="overview-card" onclick="switchDayFromMap(1)"><div class="day-label">Day2 · 5/1</div><div class="day-places">索道→十八梯→湖广会馆<br>三峡博物馆→大礼堂<br>小兵老火锅</div></div><div class="overview-card" onclick="switchDayFromMap(2)"><div class="day-label">Day3 · 5/2</div><div class="day-places">磁器口→白公馆<br>俊杰火锅→KTV</div></div><div class="overview-card" onclick="switchDayFromMap(3)"><div class="day-label">Day4 · 5/3 🎂</div><div class="day-places">鹅岭→李子坝→弹子石<br>🎂生日下午茶<br>朝天门→宝气蛙自助</div></div><div class="overview-card" onclick="switchDayFromMap(4)"><div class="day-label">Day5 · 5/4</div><div class="day-places">自由活动<br>红蜻蜓美蛙鱼<br>→重庆北站</div></div></div></div></div>';
+  return '<div class="section"><h2 class="section-title"><i class="fas fa-map-marked-alt"></i> 路线地图</h2><div class="map-section"><div class="map-header"><h3><i class="fas fa-map"></i> 行程路线</h3><div class="map-controls"><div class="map-tabs" role="tablist" aria-label="地图视图模式"><button class="map-tab active" data-mode="day" role="tab" aria-selected="true" onclick="switchMapView(\'day\')">当日路线</button><button class="map-tab" data-mode="overview" role="tab" aria-selected="false" onclick="switchMapView(\'overview\')">五日总览</button></div><div class="map-tabs route-mode-tabs" role="tablist" aria-label="路线计算方式"><button class="map-tab active" data-route="straight" role="tab" aria-selected="true" onclick="switchRouteMode(\'straight\')" title="按两点直线连接"><i class="fas fa-ruler" aria-hidden="true"></i> 直线距离</button><button class="map-tab" data-route="driving" role="tab" aria-selected="false" onclick="switchRouteMode(\'driving\')" title="按真实道路驾车路程"><i class="fas fa-route" aria-hidden="true"></i> 驾车路程</button></div></div></div><div id="mapContainer"></div><div id="mapLoading" class="map-loading" style="display:none"><i class="fas fa-spinner fa-spin"></i> 正在规划驾车路线…</div><div class="overview-cards" id="overviewCards" style="display:none"><div class="overview-card active" onclick="switchDayFromMap(0)"><div class="day-label">Day1 · 4/30</div><div class="day-places">解放碑→洪崖洞<br>蛙鱼郎美蛙鱼</div></div><div class="overview-card" onclick="switchDayFromMap(1)"><div class="day-label">Day2 · 5/1</div><div class="day-places">索道→十八梯→湖广会馆<br>三峡博物馆→大礼堂<br>小兵老火锅</div></div><div class="overview-card" onclick="switchDayFromMap(2)"><div class="day-label">Day3 · 5/2</div><div class="day-places">磁器口→白公馆<br>俊杰火锅→KTV</div></div><div class="overview-card" onclick="switchDayFromMap(3)"><div class="day-label">Day4 · 5/3 🎂</div><div class="day-places">鹅岭→李子坝→弹子石<br>🎂生日下午茶<br>朝天门→宝气蛙自助</div></div><div class="overview-card" onclick="switchDayFromMap(4)"><div class="day-label">Day5 · 5/4</div><div class="day-places">自由活动<br>红蜻蜓美蛙鱼<br>→重庆北站</div></div></div></div></div>';
 }
 
 function rFood() {
@@ -1131,7 +1198,7 @@ function rScenic() {
 }
 
 function rVote() {
-  return '<div class="section"><h2 class="section-title"><i class="fas fa-vote-yea"></i> 旅行投票</h2><div class="vote-section"><h2>🎯 选出你最期待的！</h2><p class="vote-sub">4人全部投票后揭晓结果，每人可选多个选项</p><div class="vote-players" id="votePlayers"><div class="vote-player active" onclick="selectPlayer(0)"><div class="vp-avatar" style="background:rgba(120,188,232,.72)">👨</div><div class="vp-name">刘乐彤</div><div class="vp-status" id="pStatus0">投票中</div></div><div class="vote-player" onclick="selectPlayer(1)"><div class="vp-avatar" style="background:rgba(139,199,238,.72)">👨</div><div class="vp-name">邢晖</div><div class="vp-status" id="pStatus1">未投票</div></div><div class="vote-player" onclick="selectPlayer(2)"><div class="vp-avatar" style="background:rgba(167,213,236,.72)">👩</div><div class="vp-name">王雨</div><div class="vp-status" id="pStatus2">未投票</div></div><div class="vote-player" onclick="selectPlayer(3)"><div class="vp-avatar" style="background:rgba(112,171,201,.72)">👩</div><div class="vp-name">霍颖</div><div class="vp-status" id="pStatus3">未投票</div></div></div><div class="vote-tabs"><button class="vote-tab active" data-tab="scenic" onclick="switchVoteTab(\'scenic\')">🏛️ 最期待景点</button><button class="vote-tab" data-tab="food" onclick="switchVoteTab(\'food\')">🍲 最期待美食</button></div><div class="vote-grid" id="voteGrid"></div><button class="vote-btn" id="voteBtn" onclick="submitVote()">✅ 确认投票</button><div class="vote-results" id="voteResults"></div></div></div>';
+  return '<div class="section"><h2 class="section-title"><i class="fas fa-vote-yea"></i> 旅行投票</h2><div class="vote-section"><h2>🎯 选出你最期待的！</h2><p class="vote-sub">4人全部投票后揭晓结果，每人可选多个选项</p><div class="vote-players" id="votePlayers" role="radiogroup" aria-label="选择当前投票人"><div class="vote-player active" role="radio" aria-checked="true" aria-pressed="true" aria-label="刘乐彤" onclick="selectPlayer(0)"><div class="vp-avatar" aria-hidden="true" style="background:rgba(120,188,232,.72)">👨</div><div class="vp-name">刘乐彤</div><div class="vp-status" id="pStatus0">投票中</div></div><div class="vote-player" role="radio" aria-checked="false" aria-pressed="false" aria-label="邢晖" onclick="selectPlayer(1)"><div class="vp-avatar" aria-hidden="true" style="background:rgba(139,199,238,.72)">👨</div><div class="vp-name">邢晖</div><div class="vp-status" id="pStatus1">未投票</div></div><div class="vote-player" role="radio" aria-checked="false" aria-pressed="false" aria-label="王雨" onclick="selectPlayer(2)"><div class="vp-avatar" aria-hidden="true" style="background:rgba(167,213,236,.72)">👩</div><div class="vp-name">王雨</div><div class="vp-status" id="pStatus2">未投票</div></div><div class="vote-player" role="radio" aria-checked="false" aria-pressed="false" aria-label="霍颖" onclick="selectPlayer(3)"><div class="vp-avatar" aria-hidden="true" style="background:rgba(112,171,201,.72)">👩</div><div class="vp-name">霍颖</div><div class="vp-status" id="pStatus3">未投票</div></div></div><div class="vote-tabs" role="tablist" aria-label="投票类别"><button class="vote-tab active" data-tab="scenic" role="tab" aria-selected="true" onclick="switchVoteTab(\'scenic\')">🏛️ 最期待景点</button><button class="vote-tab" data-tab="food" role="tab" aria-selected="false" onclick="switchVoteTab(\'food\')">🍲 最期待美食</button></div><div class="vote-grid" id="voteGrid"></div><button class="vote-btn" id="voteBtn" onclick="submitVote()">✅ 确认投票</button><div class="vote-results" id="voteResults"></div></div></div>';
 }
 
 function rPractical() {
@@ -1142,12 +1209,15 @@ function switchDay(i) {
   currentDay = i;
   document.querySelectorAll(".day-btn").forEach(function (b, j) {
     b.classList.toggle("active", j === i);
+    b.setAttribute("aria-pressed", j === i ? "true" : "false");
   });
   document.querySelectorAll(".day-panel").forEach(function (p, j) {
     p.classList.toggle("active", j === i);
+    p.setAttribute("aria-hidden", j === i ? "false" : "true");
   });
   document.querySelectorAll(".overview-card").forEach(function (c, j) {
     c.classList.toggle("active", j === i);
+    c.setAttribute("aria-pressed", j === i ? "true" : "false");
   });
   if (!map) return;
   if (mapViewMode === "day") updateMapDay();
@@ -1155,8 +1225,10 @@ function switchDay(i) {
 }
 function switchMapView(m) {
   mapViewMode = m;
-  document.querySelectorAll(".map-tab").forEach(function (t) {
-    t.classList.toggle("active", t.getAttribute("data-mode") === m);
+  document.querySelectorAll(".map-tab[data-mode]").forEach(function (t) {
+    var on = t.getAttribute("data-mode") === m;
+    t.classList.toggle("active", on);
+    t.setAttribute("aria-selected", on ? "true" : "false");
   });
   document.getElementById("overviewCards").style.display =
     m === "overview" ? "grid" : "none";
@@ -1180,7 +1252,12 @@ function switchDayFromMap(i) {
 var map,
   markers = [],
   polylines = [],
-  routeLabels = [];
+  routeLabels = [],
+  cluster = null,
+  drivingInst = null,
+  routeMode = "straight",
+  mapRenderToken = 0;
+
 function initMap() {
   try {
     map = new AMap.Map("mapContainer", {
@@ -1195,7 +1272,33 @@ function initMap() {
       '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#95a5a6;font-size:.9em;text-align:center;padding:20px"><div><i class="fas fa-map-marked-alt" style="font-size:3em;margin-bottom:10px;display:block"></i>地图加载中...<br><small>请确保网络连接正常</small></div></div>';
   }
 }
+
+function ensureDriving() {
+  if (!drivingInst && window.AMap && AMap.Driving) {
+    drivingInst = new AMap.Driving({
+      policy:
+        AMap.DrivingPolicy && AMap.DrivingPolicy.LEAST_DISTANCE !== undefined
+          ? AMap.DrivingPolicy.LEAST_DISTANCE
+          : 2,
+      hideMarkers: true,
+      showTraffic: false,
+      autoFitView: false,
+    });
+  }
+  return drivingInst;
+}
+
+function showMapLoading(show) {
+  var el = document.getElementById("mapLoading");
+  if (el) el.style.display = show ? "flex" : "none";
+}
+
 function clearMap() {
+  mapRenderToken++;
+  if (cluster) {
+    cluster.setMap(null);
+    cluster = null;
+  }
   markers.forEach(function (m) {
     map.remove(m);
   });
@@ -1208,6 +1311,7 @@ function clearMap() {
   markers = [];
   polylines = [];
   routeLabels = [];
+  showMapLoading(false);
 }
 function addMarker(loc, color, label, idx) {
   var prefix = idx
@@ -1247,29 +1351,101 @@ function addPolyline(path, color) {
   polylines.push(p);
   map.add(p);
 }
-function addDistanceLabel(from, to, color) {
-  var d = getDistance(from, to);
-  var mid = [(from[0] + to[0]) / 2, (from[1] + to[1]) / 2];
+function addDistanceLabelAt(position, color, text) {
   var label = new AMap.Marker({
-    position: mid,
+    position: position,
     zIndex: 80,
     content:
       '<div style="background:' +
       color +
-      ';color:#fff;border:2px solid rgba(255,255,255,.95);padding:4px 8px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap;box-shadow:0 6px 16px rgba(20,33,61,.26)">约 ' +
-      formatDistance(d) +
+      ';color:#fff;border:2px solid rgba(255,255,255,.95);padding:4px 8px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap;box-shadow:0 6px 16px rgba(20,33,61,.26)">' +
+      text +
       "</div>",
     offset: new AMap.Pixel(-26, -13),
   });
   routeLabels.push(label);
   map.add(label);
 }
+function addDistanceLabel(from, to, color) {
+  var d = getDistance(from, to);
+  var mid = [(from[0] + to[0]) / 2, (from[1] + to[1]) / 2];
+  addDistanceLabelAt(mid, color, "约 " + formatDistance(d));
+}
+function pathMidPoint(path) {
+  if (!path.length) return [0, 0];
+  var idx = Math.floor(path.length / 2);
+  return path[idx];
+}
 function drawRoute(path, color, showDistance) {
   if (path.length < 2) return;
-  addPolyline(path, color);
-  if (!showDistance) return;
-  for (var i = 0; i < path.length - 1; i++)
-    addDistanceLabel(path[i], path[i + 1], color);
+  if (routeMode === "driving" && window.AMap && AMap.Driving) {
+    drawDrivingRoute(path, color, showDistance);
+  } else {
+    addPolyline(path, color);
+    if (!showDistance) return;
+    for (var i = 0; i < path.length - 1; i++)
+      addDistanceLabel(path[i], path[i + 1], color);
+  }
+}
+function drawDrivingRoute(path, color, showDistance) {
+  var d = ensureDriving();
+  if (!d) {
+    addPolyline(path, color);
+    if (showDistance) {
+      for (var i = 0; i < path.length - 1; i++)
+        addDistanceLabel(path[i], path[i + 1], color);
+    }
+    return;
+  }
+  showMapLoading(true);
+  var token = mapRenderToken;
+  var total = path.length - 1;
+  var finished = 0;
+  function step(idx) {
+    if (idx >= total) {
+      if (token === mapRenderToken) showMapLoading(false);
+      return;
+    }
+    if (token !== mapRenderToken) return;
+    var from = new AMap.LngLat(path[idx][0], path[idx][1]);
+    var to = new AMap.LngLat(path[idx + 1][0], path[idx + 1][1]);
+    d.search(from, to, function (status, result) {
+      if (token !== mapRenderToken) return;
+      var segPath = null;
+      var distance = null;
+      if (
+        status === "complete" &&
+        result &&
+        result.routes &&
+        result.routes[0]
+      ) {
+        var route = result.routes[0];
+        segPath = [];
+        distance = route.distance;
+        route.steps.forEach(function (st) {
+          (st.path || []).forEach(function (p) {
+            segPath.push([p.lng, p.lat]);
+          });
+        });
+      }
+      if (segPath && segPath.length >= 2) {
+        addPolyline(segPath, color);
+        if (showDistance) {
+          addDistanceLabelAt(
+            pathMidPoint(segPath),
+            color,
+            "驾车 " + formatDistance(distance),
+          );
+        }
+      } else {
+        addPolyline([path[idx], path[idx + 1]], color);
+        if (showDistance) addDistanceLabel(path[idx], path[idx + 1], color);
+      }
+      finished++;
+      step(idx + 1);
+    });
+  }
+  step(0);
 }
 function getDistance(a, b) {
   if (AMap.GeometryUtil && AMap.GeometryUtil.distance)
@@ -1306,19 +1482,67 @@ function updateMapDay() {
 function updateMapOverview() {
   clearMap();
   var colors = ["#ff4f7b", "#2161ff", "#ff8a00", "#7c4dff", "#00b8a9"];
+  var clusterMarkers = [];
+  var seen = {};
   DR.forEach(function (route, di) {
     var path = [];
     route.r.forEach(function (key) {
       var loc = LOC[key];
-      if (loc) {
-        if (di === currentDay) addMarker(loc, colors[di], loc.name);
-        path.push([loc.lng, loc.lat]);
-      }
+      if (!loc) return;
+      path.push([loc.lng, loc.lat]);
+      if (di === currentDay) addMarker(loc, colors[di], loc.name);
+      if (seen[key]) return;
+      seen[key] = true;
+      clusterMarkers.push(
+        new AMap.Marker({
+          position: [loc.lng, loc.lat],
+          title: loc.name,
+          zIndex: 30,
+          offset: new AMap.Pixel(-6, -6),
+          content:
+            '<div style="width:12px;height:12px;border-radius:50%;background:' +
+            colors[di] +
+            ';border:2px solid rgba(255,255,255,.95);box-shadow:0 4px 10px rgba(20,33,61,.3)"></div>',
+        }),
+      );
     });
     drawRoute(path, colors[di], false);
   });
   addMarker(LOC.hotel, "#2c3e50", "🏨 住宿");
+  if (AMap.MarkerCluster && clusterMarkers.length) {
+    cluster = new AMap.MarkerCluster(map, clusterMarkers, {
+      gridSize: 70,
+      maxZoom: 14,
+      renderClusterMarker: function (ctx) {
+        var count = ctx.count;
+        var size = count >= 10 ? 44 : count >= 5 ? 38 : 32;
+        var div = document.createElement("div");
+        div.style.cssText =
+          "width:" +
+          size +
+          "px;height:" +
+          size +
+          "px;border-radius:50%;background:linear-gradient(135deg,#2f78a8,#78bce8);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;border:2px solid #fff;box-shadow:0 6px 18px rgba(47,120,168,.42)";
+        div.innerText = count;
+        ctx.marker.setContent(div);
+        ctx.marker.setOffset(new AMap.Pixel(-size / 2, -size / 2));
+      },
+    });
+  }
   map.setFitView(markers.concat(polylines), false, [60, 60, 60, 60]);
+}
+
+function switchRouteMode(mode) {
+  if (routeMode === mode) return;
+  routeMode = mode;
+  document.querySelectorAll(".map-tab[data-route]").forEach(function (t) {
+    var on = t.getAttribute("data-route") === mode;
+    t.classList.toggle("active", on);
+    t.setAttribute("aria-selected", on ? "true" : "false");
+  });
+  if (!map) return;
+  if (mapViewMode === "day") updateMapDay();
+  else updateMapOverview();
 }
 
 function showWeather(i) {
@@ -1403,6 +1627,8 @@ function showDetail(type, id) {
   }
 }
 
+var _modalLastFocus = null;
+
 function openModal(title, body) {
   document.getElementById("modalTitle").textContent = title;
   document.getElementById("modalBody").innerHTML = body;
@@ -1410,7 +1636,17 @@ function openModal(title, body) {
   ov.classList.remove("closing");
   ov.classList.add("show");
   document.body.style.overflow = "hidden";
+  _modalLastFocus =
+    document.activeElement && document.activeElement !== document.body
+      ? document.activeElement
+      : null;
+  if (typeof enhanceA11y === "function") enhanceA11y();
+  setTimeout(function () {
+    var closeBtn = ov.querySelector(".modal-close");
+    if (closeBtn) closeBtn.focus();
+  }, 60);
 }
+
 function closeModal(e) {
   var ov = document.getElementById("modalOverlay");
   if (e && e.target !== ov) return;
@@ -1420,19 +1656,65 @@ function closeModal(e) {
   setTimeout(function () {
     ov.classList.remove("show");
     ov.classList.remove("closing");
+    if (_modalLastFocus && typeof _modalLastFocus.focus === "function") {
+      try { _modalLastFocus.focus(); } catch (err) {}
+    }
+    _modalLastFocus = null;
   }, 240);
 }
+
+function getFocusableInModal() {
+  var ov = document.getElementById("modalOverlay");
+  if (!ov || !ov.classList.contains("show")) return [];
+  return Array.prototype.filter.call(
+    ov.querySelectorAll(
+      'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+    ),
+    function (el) {
+      return el.offsetWidth > 0 || el.offsetHeight > 0 || el === document.activeElement;
+    },
+  );
+}
+
 document.addEventListener("keydown", function (e) {
+  var ov = document.getElementById("modalOverlay");
+  var isModalOpen = ov && ov.classList.contains("show") && !ov.classList.contains("closing");
   if (e.key === "Escape" || e.keyCode === 27) {
-    var ov = document.getElementById("modalOverlay");
-    if (ov && ov.classList.contains("show")) closeModal();
+    if (isModalOpen) {
+      e.preventDefault();
+      closeModal();
+    }
+    return;
+  }
+  if (e.key === "Tab" && isModalOpen) {
+    var focusables = getFocusableInModal();
+    if (!focusables.length) {
+      e.preventDefault();
+      return;
+    }
+    var first = focusables[0];
+    var last = focusables[focusables.length - 1];
+    var active = document.activeElement;
+    if (e.shiftKey && active === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && active === last) {
+      e.preventDefault();
+      first.focus();
+    } else if (!ov.contains(active)) {
+      e.preventDefault();
+      first.focus();
+    }
   }
 });
 
 function selectPlayer(i) {
   currentPlayer = i;
   document.querySelectorAll(".vote-player").forEach(function (p, j) {
-    p.classList.toggle("active", j === i);
+    var on = j === i;
+    p.classList.toggle("active", on);
+    p.setAttribute("aria-pressed", on ? "true" : "false");
+    p.setAttribute("aria-checked", on ? "true" : "false");
   });
   updateVoteActionButton();
   rVoteGrid();
@@ -1476,7 +1758,9 @@ function withdrawVote() {
 function switchVoteTab(tab) {
   currentVoteTab = tab;
   document.querySelectorAll(".vote-tab").forEach(function (t) {
-    t.classList.toggle("active", t.getAttribute("data-tab") === tab);
+    var on = t.getAttribute("data-tab") === tab;
+    t.classList.toggle("active", on);
+    t.setAttribute("aria-selected", on ? "true" : "false");
   });
   rVoteGrid();
 }
@@ -1492,9 +1776,20 @@ function rVoteGrid() {
       '<div class="vote-item' +
       (isSel ? " selected" : "") +
       (isLocked ? " locked" : "") +
+      '" role="checkbox" aria-checked="' +
+      (isSel ? "true" : "false") +
+      '" aria-pressed="' +
+      (isSel ? "true" : "false") +
+      '"' +
+      (isLocked
+        ? ' aria-disabled="true" tabindex="-1"'
+        : ' tabindex="0"') +
+      ' aria-label="' +
+      (isSel ? "已选 " : "") +
+      item.name +
       '" onclick="toggleVote(\'' +
       item.id +
-      '\')"><div class="vi-icon" style="background:' +
+      '\')"><div class="vi-icon" aria-hidden="true" style="background:' +
       (currentVoteTab === "scenic" ? "#e8f5e9" : "#fff3e0") +
       '">' +
       item.icon +
@@ -1502,9 +1797,10 @@ function rVoteGrid() {
       item.name +
       '</div><div class="vi-desc">' +
       item.desc +
-      '</div></div><div class="vi-check">✓</div></div>';
+      '</div></div><div class="vi-check" aria-hidden="true">✓</div></div>';
   });
   document.getElementById("voteGrid").innerHTML = h;
+  if (typeof enhanceA11y === "function") enhanceA11y();
 }
 
 function toggleVote(id) {

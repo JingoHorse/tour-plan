@@ -10,6 +10,7 @@
 </head>
 
 <body>
+    <a href="#app" class="skip-link">跳到主要内容</a>
     <div class="hero">
         <div class="hero-eyebrow" aria-hidden="true"><span>CHONGQING · SPRING JOURNEY · 2026</span></div>
         <h1 class="hero-title">
@@ -29,12 +30,12 @@
             <div class="meta-item"><i class="fas fa-train"></i> 5/4 15:30 重庆北站</div>
         </div>
     </div>
-    <div class="container" id="app"></div>
-    <div class="footer">🏔️ 山城重庆之旅 · 2026.04.30 - 05.04 · 四人同行</div>
+    <main class="container" id="app" tabindex="-1"></main>
+    <footer class="footer">🏔️ 山城重庆之旅 · 2026.04.30 - 05.04 · 四人同行</footer>
     <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
-        <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" onclick="event.stopPropagation()">
             <div class="modal-header">
-                <h3 id="modalTitle"></h3><button class="modal-close" onclick="closeModal()">✕</button>
+                <h3 id="modalTitle"></h3><button class="modal-close" onclick="closeModal()" aria-label="关闭弹窗">✕</button>
             </div>
             <div class="modal-body" id="modalBody"></div>
         </div>

@@ -876,8 +876,50 @@ button {
     justify-content: space-between;
     border-bottom: 1px solid var(--divider);
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 14px;
     background: var(--bg-soft);
+}
+
+.map-controls {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.route-mode-tabs .map-tab i {
+    margin-right: 4px;
+    font-size: 0.85em;
+    opacity: 0.85;
+}
+
+/* 地图 loading */
+.map-section {
+    position: relative;
+}
+
+.map-loading {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-md);
+    font-size: 0.86em;
+    font-weight: 600;
+    color: var(--primary-deep);
+    pointer-events: none;
+}
+
+.map-loading i {
+    color: var(--primary-deep);
 }
 
 .map-header h3 {
@@ -1251,24 +1293,6 @@ button {
     border-color: var(--primary-deep);
     background: rgba(120, 188, 232, 0.08);
     box-shadow: 0 4px 12px rgba(47, 120, 168, 0.1);
-}
-
-.vote-item.locked {
-    cursor: not-allowed;
-    opacity: 0.78;
-    pointer-events: none;
-    background: var(--bg-soft);
-}
-
-.vote-item.locked.selected {
-    opacity: 1;
-    border-color: rgba(16, 163, 127, 0.55);
-    background: rgba(16, 163, 127, 0.08);
-    box-shadow: 0 4px 12px rgba(16, 163, 127, 0.08);
-}
-
-.vote-item.locked.selected .vi-check {
-    color: var(--c-green);
 }
 
 .vote-item.locked {
@@ -1718,6 +1742,90 @@ button {
     border-top: 1px solid var(--border);
     background: var(--surface);
     margin-top: 40px;
+}
+
+/* ============================================================
+   Accessibility - Skip Link
+   ============================================================ */
+.skip-link {
+    position: fixed;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    padding: 12px 24px;
+    background: var(--primary-deep, #2f78a8);
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: 0 0 12px 12px;
+    text-decoration: none;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+    transition: top 0.2s ease;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+    top: 0;
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+/* Hide outline on programmatic focus of the main container */
+#app:focus {
+    outline: none;
+}
+
+/* ============================================================
+   Accessibility - Focus Visible
+   ============================================================ */
+:where(
+    .weather-card,
+    .overview-item,
+    .timeline-card[onclick],
+    .overview-card,
+    .food-card,
+    .scenic-card,
+    .vote-player,
+    .vote-item,
+    .day-btn,
+    .map-tab,
+    .vote-tab,
+    .vote-btn,
+    .modal-close,
+    [role="button"][tabindex]
+):focus {
+    outline: none;
+}
+
+:where(
+    .weather-card,
+    .overview-item,
+    .timeline-card[onclick],
+    .overview-card,
+    .food-card,
+    .scenic-card,
+    .vote-player,
+    .vote-item,
+    .day-btn,
+    .map-tab,
+    .vote-tab,
+    .vote-btn,
+    .modal-close,
+    [role="button"][tabindex]
+):focus-visible {
+    outline: 2px solid var(--primary-deep);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 4px rgba(47, 120, 168, 0.16), var(--shadow-md);
+    border-radius: inherit;
+}
+
+.vote-btn:focus-visible {
+    outline-offset: 4px;
+}
+
+.modal-close:focus-visible {
+    outline-offset: 2px;
 }
 
 /* ============================================================
