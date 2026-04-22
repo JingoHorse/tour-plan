@@ -891,6 +891,10 @@ var DAYS = [
 var TRIP_START = new Date(2026, 3, 30);
 var TRIP_END = new Date(2026, 4, 4);
 var MS_PER_DAY = 86400000;
+var BIRTHDAY_MONTH = 4;
+var BIRTHDAY_DAY = 3;
+var BIRTHDAY_VIEW_PREFIX = "tourPlanBirthdaySurpriseViews:";
+var BIRTHDAY_MAX_AUTO_VIEWS = 3;
 
 function getTripStatus() {
   var now = new Date();
@@ -938,6 +942,135 @@ function renderCountdown() {
   }
 }
 
+function getBirthdayDateKey(date) {
+  var month = String(date.getMonth() + 1).padStart(2, "0");
+  var day = String(date.getDate()).padStart(2, "0");
+  return date.getFullYear() + "-" + month + "-" + day;
+}
+
+function getBirthdaySurpriseViews(date) {
+  try {
+    var value = parseInt(
+      localStorage.getItem(BIRTHDAY_VIEW_PREFIX + getBirthdayDateKey(date)) || "0",
+      10,
+    );
+    return Number.isNaN(value) ? 0 : value;
+  } catch (err) {
+    return 0;
+  }
+}
+
+function recordBirthdaySurpriseView(date) {
+  try {
+    var views = getBirthdaySurpriseViews(date);
+    localStorage.setItem(BIRTHDAY_VIEW_PREFIX + getBirthdayDateKey(date), String(views + 1));
+  } catch (err) {}
+}
+
+function getBirthdaySurpriseState(date) {
+  var params = new URLSearchParams(window.location.search);
+  var birthdayParam = params.get("birthday");
+  if (birthdayParam === "1") return { show: true, forced: true };
+  if (birthdayParam === "0") return { show: false, forced: false };
+  if (date.getMonth() !== BIRTHDAY_MONTH || date.getDate() !== BIRTHDAY_DAY) {
+    return { show: false, forced: false };
+  }
+  if (getBirthdaySurpriseViews(date) >= BIRTHDAY_MAX_AUTO_VIEWS) {
+    return { show: false, forced: false };
+  }
+  return { show: true, forced: false };
+}
+
+function initBirthdaySurprise() {
+  var now = new Date();
+  var surpriseState = getBirthdaySurpriseState(now);
+  if (!surpriseState.show) return;
+  if (document.getElementById("birthdaySurprise")) return;
+  if (!surpriseState.forced) recordBirthdaySurpriseView(now);
+
+  var overlay = document.createElement("div");
+  overlay.className = "birthday-surprise";
+  overlay.id = "birthdaySurprise";
+  overlay.setAttribute("role", "dialog");
+  overlay.setAttribute("aria-modal", "true");
+  overlay.setAttribute("aria-labelledby", "birthdaySurpriseTitle");
+
+  var confetti = "";
+  var confettiColors = ["rose", "gold", "blue", "green"];
+  for (var i = 0; i < 42; i++) {
+    var x = (i * 29) % 100;
+    var drift = (50 - x) * 0.42;
+    confetti +=
+      '<span class="birthday-confetti ' +
+      confettiColors[i % confettiColors.length] +
+      '" style="left:' +
+      x +
+      "%;--drift:" +
+      drift +
+      "vw;--delay:" +
+      ((i % 14) * 0.12) +
+      "s;--spin:" +
+      (i % 2 === 0 ? "520deg" : "-520deg") +
+      '"></span>';
+  }
+
+  overlay.innerHTML =
+    '<div class="birthday-sky" aria-hidden="true">' +
+    confetti +
+    '<span class="birthday-balloon b1">🎈</span>' +
+    '<span class="birthday-balloon b2">🎈</span>' +
+    '<span class="birthday-balloon b3">🎈</span>' +
+    "</div>" +
+    '<div class="birthday-card">' +
+    '<button class="birthday-close" type="button" aria-label="关闭生日惊喜" onclick="closeBirthdaySurprise()">✕</button>' +
+    '<div class="birthday-kicker">MAY 3 · BIRTHDAY MOMENT</div>' +
+    '<div class="birthday-cake-wrap" aria-hidden="true">' +
+    '<div class="birthday-candle"><span></span></div>' +
+    '<div class="birthday-cake"><span></span></div>' +
+    "</div>" +
+    '<h2 id="birthdaySurpriseTitle">生日快乐，今晚把愿望留给山城夜风</h2>' +
+    '<p>今天的行程已经偷偷加了一颗彩蛋：慢慢逛、好好吃，晚上一起把这份惊喜拆开。</p>' +
+    '<div class="birthday-actions">' +
+    '<button class="birthday-primary" type="button" onclick="openBirthdayPlan()">查看 5/3 行程</button>' +
+    '<button class="birthday-secondary" type="button" onclick="closeBirthdaySurprise()">先收下惊喜</button>' +
+    "</div>" +
+    "</div>";
+
+  document.body.appendChild(overlay);
+  document.body.classList.add("birthday-open");
+  setTimeout(function () {
+    overlay.classList.add("show");
+    var closeBtn = overlay.querySelector(".birthday-close");
+    if (closeBtn) closeBtn.focus();
+  }, 120);
+  setTimeout(function () {
+    if (overlay && overlay.classList.contains("show")) {
+      overlay.classList.add("settled");
+    }
+  }, 4300);
+}
+
+function closeBirthdaySurprise() {
+  var overlay = document.getElementById("birthdaySurprise");
+  if (!overlay) return;
+  overlay.classList.add("closing");
+  document.body.classList.remove("birthday-open");
+  setTimeout(function () {
+    if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+  }, 260);
+}
+
+function openBirthdayPlan() {
+  switchDay(3);
+  closeBirthdaySurprise();
+  setTimeout(function () {
+    var day = document.getElementById("day3");
+    if (day && typeof day.scrollIntoView === "function") {
+      day.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, 280);
+}
+
 function renderApp() {
   var a = document.getElementById("app");
   a.innerHTML =
@@ -955,6 +1088,7 @@ function renderApp() {
   rVoteGrid();
   initMap();
   enhanceA11y();
+  initBirthdaySurprise();
 }
 
 function enhanceA11y() {
@@ -1677,6 +1811,31 @@ function getFocusableInModal() {
 }
 
 document.addEventListener("keydown", function (e) {
+  var birthday = document.getElementById("birthdaySurprise");
+  if ((e.key === "Escape" || e.keyCode === 27) && birthday) {
+    e.preventDefault();
+    closeBirthdaySurprise();
+    return;
+  }
+  if (e.key === "Tab" && birthday) {
+    var birthdayFocusables = Array.prototype.slice.call(
+      birthday.querySelectorAll("button:not([disabled])"),
+    );
+    if (!birthdayFocusables.length) return;
+    var firstBirthdayControl = birthdayFocusables[0];
+    var lastBirthdayControl = birthdayFocusables[birthdayFocusables.length - 1];
+    if (e.shiftKey && document.activeElement === firstBirthdayControl) {
+      e.preventDefault();
+      lastBirthdayControl.focus();
+    } else if (!e.shiftKey && document.activeElement === lastBirthdayControl) {
+      e.preventDefault();
+      firstBirthdayControl.focus();
+    } else if (!birthday.contains(document.activeElement)) {
+      e.preventDefault();
+      firstBirthdayControl.focus();
+    }
+    return;
+  }
   var ov = document.getElementById("modalOverlay");
   var isModalOpen = ov && ov.classList.contains("show") && !ov.classList.contains("closing");
   if (e.key === "Escape" || e.keyCode === 27) {
