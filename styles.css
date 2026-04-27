@@ -135,16 +135,24 @@ button {
 
 /* ———— Hero Eyebrow（英文小眉题，类似杂志封面） ———— */
 .hero-eyebrow {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
     gap: 16px;
-    font-size: 0.78em;
+    width: 100%;
+    max-width: 100%;
+    font-size: 0.78rem;
     font-weight: 600;
-    letter-spacing: 6px;
+    letter-spacing: 0;
     color: var(--primary-deep);
     margin-bottom: 24px;
     opacity: 0.85;
+    white-space: nowrap;
+}
+
+.hero-eyebrow span {
+    min-width: 0;
+    white-space: nowrap;
 }
 
 .hero-eyebrow::before,
@@ -162,16 +170,21 @@ button {
 
 /* ———— 艺术字主标题 ———— */
 .hero-title {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
     gap: 20px;
-    font-size: clamp(2.8em, 6vw, 4.6em);
+    width: fit-content;
+    max-width: 100%;
+    font-size: 4.35rem;
     font-weight: 900;
     line-height: 1.1;
     margin-bottom: 24px;
     font-family: 'Source Han Serif SC', 'Noto Serif SC', 'Songti SC',
         'STSong', 'SimSun', 'SF Pro SC', serif;
+    white-space: nowrap;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .hero-title .title-icon {
@@ -188,7 +201,9 @@ button {
 .hero-title .title-text {
     display: inline-flex;
     gap: 0.08em;
-    letter-spacing: 0.05em;
+    letter-spacing: 0;
+    min-width: 0;
+    white-space: nowrap;
 }
 
 .hero-title .title-text > span {
@@ -203,8 +218,8 @@ button {
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
-    filter: drop-shadow(0 8px 18px rgba(47, 120, 168, 0.22));
-    transition: transform 0.35s cubic-bezier(.2, .8, .2, 1), filter 0.35s;
+    text-shadow: 0 8px 18px rgba(47, 120, 168, 0.18);
+    transition: transform 0.35s cubic-bezier(.2, .8, .2, 1), text-shadow 0.35s;
     animation: titleReveal 0.9s cubic-bezier(.2, .8, .2, 1) both;
 }
 
@@ -218,19 +233,31 @@ button {
 @keyframes titleReveal {
     from {
         opacity: 0;
-        transform: translateY(24px) scale(0.96);
-        filter: blur(6px);
+        transform: translateY(18px);
     }
     to {
         opacity: 1;
-        transform: translateY(0) scale(1);
-        filter: drop-shadow(0 8px 18px rgba(47, 120, 168, 0.22));
+        transform: none;
     }
 }
 
 .hero-title:hover .title-text > span {
     transform: translateY(-3px);
-    filter: drop-shadow(0 12px 24px rgba(47, 120, 168, 0.35));
+    text-shadow: 0 12px 24px rgba(47, 120, 168, 0.28);
+}
+
+@supports (-webkit-touch-callout: none) {
+    .hero-title .title-text > span {
+        background: none;
+        -webkit-text-fill-color: #1f5d87;
+        color: #1f5d87;
+        text-shadow: 0 2px 0 rgba(255, 255, 255, 0.55);
+    }
+
+    .hero-title:hover .title-text > span {
+        transform: none;
+        text-shadow: 0 2px 0 rgba(255, 255, 255, 0.55);
+    }
 }
 
 /* ———— 装饰分隔线 ———— */
@@ -2299,6 +2326,9 @@ button {
     .container {
         padding: 0 24px;
     }
+    .hero-title {
+        font-size: 3.55rem;
+    }
     .weather-grid {
         grid-template-columns: repeat(5, 1fr);
     }
@@ -2312,8 +2342,8 @@ button {
         padding: 64px 20px 56px;
     }
     .hero-eyebrow {
-        font-size: 0.7em;
-        letter-spacing: 3px;
+        gap: 10px;
+        font-size: 0.7rem;
         margin-bottom: 18px;
     }
     .hero-eyebrow::before,
@@ -2322,10 +2352,11 @@ button {
     }
     .hero-title {
         gap: 12px;
+        font-size: 3rem;
         margin-bottom: 18px;
     }
     .hero-title .title-text {
-        gap: 0.04em;
+        gap: 0.03em;
     }
     .hero-divider span {
         width: 110px;
@@ -2373,6 +2404,25 @@ button {
 }
 
 @media (max-width: 480px) {
+    .hero {
+        padding-right: 14px;
+        padding-left: 14px;
+    }
+    .hero-eyebrow {
+        gap: 7px;
+        font-size: 0.56rem;
+    }
+    .hero-eyebrow::before,
+    .hero-eyebrow::after {
+        width: 12px;
+    }
+    .hero-title {
+        gap: 7px;
+        font-size: 2.12rem;
+    }
+    .hero-title .title-text {
+        gap: 0.015em;
+    }
     .weather-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -2416,6 +2466,21 @@ button {
     .birthday-primary,
     .birthday-secondary {
         width: 100%;
+    }
+}
+
+@media (max-width: 360px) {
+    .hero-eyebrow {
+        gap: 5px;
+        font-size: 0.5rem;
+    }
+    .hero-eyebrow::before,
+    .hero-eyebrow::after {
+        width: 8px;
+    }
+    .hero-title {
+        gap: 6px;
+        font-size: 1.86rem;
     }
 }
 
