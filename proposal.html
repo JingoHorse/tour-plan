@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>邢晖 ❤️ 王雨 求婚仪式</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="proposal-page">
+    <main class="proposal-shell" id="proposalShell"></main>
+
+    <script>
+        (function () {
+            var unlockAt = new Date("2026-05-03T13:30:00+08:00").getTime();
+            var params = new URLSearchParams(window.location.search);
+            var debugMode = params.get("proposal") === "1";
+            var shell = document.getElementById("proposalShell");
+            if (debugMode || Date.now() >= unlockAt) {
+                shell.innerHTML =
+                    '<a class="proposal-back" href="index.html" aria-label="返回行程">返回行程</a>' +
+                    '<section class="proposal-stage" aria-labelledby="proposalTitle">' +
+                    '<div class="proposal-title-wrap">' +
+                    '<div class="proposal-kicker">MAY 3 · CHONGQING</div>' +
+                    '<h1 id="proposalTitle" class="proposal-title">邢晖 <span>❤️</span> 王雨 求婚仪式</h1>' +
+                    '</div>' +
+                    '<div class="proposal-photo-frame">' +
+                    '<img src="resource/proposal.png" alt="邢晖和王雨求婚仪式图片">' +
+                    '</div>' +
+                    '</section>';
+                return;
+            }
+            shell.innerHTML =
+                '<section class="proposal-stage proposal-locked" aria-labelledby="proposalLockedTitle">' +
+                '<a class="proposal-back" href="index.html" aria-label="返回行程">返回行程</a>' +
+                '<div class="proposal-lock-icon">❤️</div>' +
+                '<h1 id="proposalLockedTitle" class="proposal-title">惊喜还没到时间</h1>' +
+                '<p>这个求婚仪式页面将在 <strong>2026年5月3日 13:30</strong> 后开放。</p>' +
+                '<p class="proposal-lock-note">到时间后从 5/3 14:00 的“生日下午茶·弹子石老街”卡片进入。</p>' +
+                '</section>';
+        })();
+    </script>
+</body>
+
+</html>

@@ -3,6 +3,7 @@ var currentDay = 0,
   currentPlayer = 0,
   currentVoteTab = "scenic",
   votedPlayers = new Set();
+var PROPOSAL_UNLOCK_AT = new Date("2026-05-03T13:30:00+08:00").getTime();
 var voteData = {
   0: {
     scenic: [],
@@ -743,8 +744,8 @@ var DAYS = [
           { c: "scenic", l: "景点" },
         ],
         tp: "",
-        dk: "scenic",
-        did: "danzishi",
+        dk: "proposal",
+        did: "proposal",
       },
       {
         t: "16:30",
@@ -1071,6 +1072,30 @@ function openBirthdayPlan() {
   }, 280);
 }
 
+function canOpenProposalPage() {
+  return Date.now() >= PROPOSAL_UNLOCK_AT || isProposalDebugMode();
+}
+
+function isProposalDebugMode() {
+  try {
+    return new URLSearchParams(window.location.search).get("proposal-before") === "1";
+  } catch (err) {
+    return false;
+  }
+}
+
+function openProposalPage() {
+  var debug = isProposalDebugMode();
+  if (Date.now() >= PROPOSAL_UNLOCK_AT || debug) {
+    window.location.href = debug ? "proposal.html?birthday=1" : "proposal.html";
+    return;
+  }
+  openModal(
+    "惊喜还没到时间",
+    '<div class="proposal-lock"><div class="proposal-lock-icon">❤️</div><p>这个求婚仪式页面将在 <strong>2026年5月3日 13:30</strong> 后开放。</p><p class="proposal-lock-note">时间一到，再点开这张下午茶卡片就能看到完整惊喜。</p></div>',
+  );
+}
+
 function renderApp() {
   var a = document.getElementById("app");
   a.innerHTML =
@@ -1220,13 +1245,16 @@ function rItinerary() {
     });
     h += '</div><div class="timeline">';
     d.tl.forEach(function (t) {
+      var clickHandler = "";
+      var proposalUnlocked = t.dk === "proposal" && canOpenProposalPage();
+      if (proposalUnlocked) clickHandler = ' onclick="openProposalPage()"';
+      else if (t.dk && t.dk !== "proposal") clickHandler = " onclick=\"showDetail('" + t.dk + "','" + t.did + "')\"";
       h +=
         '<div class="timeline-item' +
         (t.tp ? " " + t.tp : "") +
         '"><div class="timeline-card"' +
-        (t.dk
-          ? " onclick=\"showDetail('" + t.dk + "','" + t.did + "')\""
-          : "") +
+        clickHandler +
+        (proposalUnlocked ? ' data-special="proposal"' : "") +
         '><div class="time"><i class="fas fa-clock"></i> ' +
         t.t +
         '</div><div class="title">' +
