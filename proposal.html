@@ -15,18 +15,48 @@
         (function () {
             var unlockAt = new Date("2026-05-03T13:30:00+08:00").getTime();
             var params = new URLSearchParams(window.location.search);
-            var debugMode = params.get("proposal") === "1";
+            var debugMode = params.get("birthday") === "1" || params.get("proposal") === "1";
             var shell = document.getElementById("proposalShell");
             if (debugMode || Date.now() >= unlockAt) {
                 shell.innerHTML =
                     '<a class="proposal-back" href="index.html" aria-label="返回行程">返回行程</a>' +
                     '<section class="proposal-stage" aria-labelledby="proposalTitle">' +
+                    '<div class="proposal-sparkles" aria-hidden="true">' +
+                    '<span style="--x:8%;--y:18%;--s:5px;--d:0s"></span>' +
+                    '<span style="--x:18%;--y:66%;--s:4px;--d:.8s"></span>' +
+                    '<span style="--x:28%;--y:12%;--s:3px;--d:1.6s"></span>' +
+                    '<span style="--x:38%;--y:78%;--s:5px;--d:.35s"></span>' +
+                    '<span style="--x:52%;--y:8%;--s:4px;--d:1.15s"></span>' +
+                    '<span style="--x:66%;--y:72%;--s:3px;--d:.55s"></span>' +
+                    '<span style="--x:78%;--y:16%;--s:5px;--d:1.4s"></span>' +
+                    '<span style="--x:91%;--y:58%;--s:4px;--d:.2s"></span>' +
+                    '<span style="--x:11%;--y:42%;--s:6px;--d:1.9s"></span>' +
+                    '<span style="--x:23%;--y:86%;--s:4px;--d:2.3s"></span>' +
+                    '<span style="--x:44%;--y:22%;--s:5px;--d:2.7s"></span>' +
+                    '<span style="--x:58%;--y:88%;--s:6px;--d:1.05s"></span>' +
+                    '<span style="--x:72%;--y:44%;--s:4px;--d:2.1s"></span>' +
+                    '<span style="--x:86%;--y:82%;--s:5px;--d:1.7s"></span>' +
+                    '</div>' +
+                    '<div class="proposal-scene-decor" aria-hidden="true">' +
+                    '<img class="proposal-scene-firework fw-left" src="resource/fireworks.png" alt="">' +
+                    '<img class="proposal-scene-firework fw-right" src="resource/fireworks2.png" alt="">' +
+                    '</div>' +
                     '<div class="proposal-title-wrap">' +
+                    '<img class="proposal-heart" src="resource/heart.png" alt="" aria-hidden="true">' +
                     '<div class="proposal-kicker">MAY 3 · CHONGQING</div>' +
                     '<h1 id="proposalTitle" class="proposal-title">邢晖 <span>❤️</span> 王雨 求婚仪式</h1>' +
+                    '<div class="proposal-title-glow" aria-hidden="true">' +
+                    '<span></span><span></span><span></span>' +
                     '</div>' +
+                    '</div>' +
+                    '<div class="proposal-photo-wrap">' +
+                    '<img class="proposal-frame-ribbon ribbon-top" src="resource/ribbon.png" alt="" aria-hidden="true">' +
+                    '<img class="proposal-frame-ribbon ribbon-bottom" src="resource/ribbon2.png" alt="" aria-hidden="true">' +
+                    '<img class="proposal-frame-decor decor-heart" src="resource/heart_decoration2.png" alt="" aria-hidden="true">' +
+                    '<img class="proposal-frame-decor decor-firework" src="resource/fireworks.png" alt="" aria-hidden="true">' +
                     '<div class="proposal-photo-frame">' +
-                    '<img src="resource/proposal.png" alt="邢晖和王雨求婚仪式图片">' +
+                    '<img class="proposal-photo" src="resource/proposal.png" alt="邢晖和王雨求婚仪式图片">' +
+                    '</div>' +
                     '</div>' +
                     '</section>';
                 return;

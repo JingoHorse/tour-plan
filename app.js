@@ -1078,7 +1078,8 @@ function canOpenProposalPage() {
 
 function isProposalDebugMode() {
   try {
-    return new URLSearchParams(window.location.search).get("proposal-before") === "1";
+    var params = new URLSearchParams(window.location.search);
+    return params.get("proposal-before") === "1" || params.get("proposal") === "1";
   } catch (err) {
     return false;
   }
